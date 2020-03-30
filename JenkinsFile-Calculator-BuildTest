@@ -3,7 +3,7 @@ pipeline {
     stages {
          stage("Checkout Stage") {
               steps {
-                   git url: 'https://github.com/kkhalilvmpro/calculator.git'
+                   git url: 'https://github.com/vmproppotluri/calculator.git'
               }
          }
          stage("Compile Build Stage") {
@@ -14,6 +14,22 @@ pipeline {
          stage("Compile Test Stage") {
               steps {
                    sh "./gradlew test"
+              }
+         }
+         stage("Code Coverage") {
+              steps {
+                   sh "./gradlew jacocoTestCoverageVerification"
+              }
+         }
+	 stage("Code coverage Report") {
+	      steps {
+                   sh "./gradlew jacocoTestReport"
+                   publishHTML (target: [
+                        reportDir: 'build/reports/jacoco/test/html',
+                        reportFiles: 'index.html',
+                        reportName: "JaCoCo Report"
+                   ])
+                   sh "./gradlew jacocoTestCoverageVerification"
               }
          }
     }
